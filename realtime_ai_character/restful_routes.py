@@ -22,6 +22,8 @@ from realtime_ai_character.llm.system_prompt_generator import generate_system_pr
 from requests import Session
 from sqlalchemy import func
 
+from realtime_ai_character.logger import get_logger
+logger = get_logger(__name__)
 
 router = APIRouter()
 
@@ -70,6 +72,14 @@ async def status():
 @router.get("/characters")
 async def characters(user=Depends(get_current_user)):
     def get_image_url(character):
+
+        logger.info(f"get_image_url: {character.character_id}")
+        # get_image_url: Character(character_id='lucy'
+        # hack
+        if character and character.character_id == 'lucy':
+            logger.info(f"get_image_url of lucy")
+            return "http://52.23.167.44:8080/img/lucy.png"
+
         gcs_path = 'https://storage.googleapis.com/assistly'
         if character.data and 'avatar_filename' in character.data:
             return f'{gcs_path}/{character.data["avatar_filename"]}'
